@@ -10,9 +10,9 @@ App\Entity\Products:
       groups: ["products"]
     color:
       groups: ["products"]
-    merchants:
+    merchant:
       groups: ["products"]
-    categories:
+    category:
       groups: ["products"]
     price:
       groups: ["products"]

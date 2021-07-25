@@ -8,11 +8,21 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use App\Repository\ProductsRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use FOS\RestBundle\View\View;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 class ProductsController extends AbstractFOSRestController
 {
+    private $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * @Rest\Get(path="/products")
      * @Rest\View(serializerGroups={"products"}, serializerEnableMaxDepthChecks=true)
@@ -45,5 +55,19 @@ class ProductsController extends AbstractFOSRestController
         }
 
         return $form;
+    }
+
+    /**
+     * @Rest\Delete(path="/products/{id}")
+     * @Rest\View(serializerGroups={"products"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function deleteAction(string $id, ProductsRepository $productsRepository)
+    {
+        try {
+            $productsRepository->deleteById($id);
+        } catch (Throwable $t) {
+            return View::create('Book not found', Response::HTTP_BAD_REQUEST);
+        }
+        return View::create(null, Response::HTTP_NO_CONTENT);
     }
 }

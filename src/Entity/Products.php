@@ -43,7 +43,6 @@ class Products
      */
     private $merchant;
 
-    private $merchant_id;
 
     /**
      * @ORM\ManyToOne(targetEntity=Categories::class, inversedBy="products")
@@ -51,7 +50,7 @@ class Products
      */
     private $category;
 
-    private $category_id;
+
 
     /**
      * @ORM\Column(type="float")
@@ -131,24 +130,24 @@ class Products
         return $this;
     }
 
-    public function getMerchant(): ?merchants
+    public function getMerchant(): ?Merchants
     {
         return $this->merchant;
     }
 
-    public function setMerchant(?merchants $merchant): self
+    public function setMerchant(?Merchants $merchant): self
     {
         $this->merchant = $merchant;
 
         return $this;
     }
 
-    public function getCategory(): ?categories
+    public function getCategory(): ?Categories
     {
         return $this->category;
     }
 
-    public function setCategory(?categories $category): self
+    public function setCategory(?Categories $category): self
     {
         $this->category = $category;
 
@@ -203,15 +202,7 @@ class Products
         return $this;
     }
 
-    public function getmerchantId(): ?int
-    {
-        return $this->merchant_id;
-    }
 
-    public function getcategoryId(): ?int
-    {
-        return $this->merchant_id;
-    }
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {

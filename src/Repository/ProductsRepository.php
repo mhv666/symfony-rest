@@ -47,4 +47,16 @@ class ProductsRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function deleteById($id): ?bool
+    {
+        $em = $this->getEntityManager();
+        $product = $this->findOneBy(array('id' => $id));
+
+        if ($product != null) {
+            $em->remove($product);
+            $em->flush();
+        }
+        return true;
+    }
 }
