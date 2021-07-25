@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Categories;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 
 /**
  * @method Categories|null find($id, $lockMode = null, $lockVersion = null)
@@ -47,4 +48,18 @@ class CategoriesRepository extends ServiceEntityRepository
         ;
     }
     */
+
+
+    public function getAllId(): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT c.id
+            FROM App\Entity\Categories c'
+        );
+
+        // returns an array of Product objects
+        return $query->getResult();
+    }
 }

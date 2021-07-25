@@ -20,7 +20,7 @@ class Merchants
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=countries::class, inversedBy="merchants")
+     * @ORM\ManyToOne(targetEntity=countries::class, inversedBy="merchants", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $country;
