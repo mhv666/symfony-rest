@@ -1,0 +1,26 @@
+App\Entity\Products:
+  attributes:
+    id:
+      groups: ["products"]
+    name:
+      groups: ["products"]
+    description:
+      groups: ["products"]
+    image:
+      groups: ["products"]
+    color:
+      groups: ["products"]
+    merchants:
+      groups: ["products"]
+    categories:
+      groups: ["products"]
+    price:
+      groups: ["products"]
+    ean13:
+      groups: ["products"]
+    stock:
+      groups: ["products"]
+    tax_percentage:
+      groups: ["products"]
+    created_at:
+      groups: ["products"]

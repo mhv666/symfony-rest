@@ -38,16 +38,20 @@ class Products
     private $color;
 
     /**
-     * @ORM\ManyToOne(targetEntity=merchants::class, inversedBy="products")
+     * @ORM\ManyToOne(targetEntity=Merchants::class, inversedBy="products")
      * @ORM\JoinColumn(nullable=false)
      */
     private $merchant;
 
+    private $merchant_id;
+
     /**
-     * @ORM\ManyToOne(targetEntity=categories::class, inversedBy="products")
+     * @ORM\ManyToOne(targetEntity=Categories::class, inversedBy="products")
      * @ORM\JoinColumn(nullable=false)
      */
     private $category;
+
+    private $category_id;
 
     /**
      * @ORM\Column(type="float")
@@ -197,6 +201,16 @@ class Products
         $this->tax_percentage = $tax_percentage;
 
         return $this;
+    }
+
+    public function getmerchantId(): ?int
+    {
+        return $this->merchant_id;
+    }
+
+    public function getcategoryId(): ?int
+    {
+        return $this->merchant_id;
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable
