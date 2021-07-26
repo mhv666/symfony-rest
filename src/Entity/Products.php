@@ -77,6 +77,11 @@ class Products
      */
     private $created_at;
 
+    public function __construct()
+    {
+        $this->created_at = new \DateTimeImmutable();
+    }
+
     public function getId(): ?int
     {
         return $this->id;

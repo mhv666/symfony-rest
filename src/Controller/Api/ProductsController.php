@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\Merchants;
 use App\Entity\Products;
+use App\Form\ProductsType;
 use App\Form\Type\ProductsFormType;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -59,10 +60,12 @@ class ProductsController extends AbstractFOSRestController
 
 
         $product = new Products();
-        $form = $this->createForm(ProductsFormType::class, $product);
+        $form = $this->createForm(ProductsType::class, $product);
+
+
         $form->handleRequest($request);
 
-        return $product;
+
 
 
         if (!$form->isSubmitted()) {
