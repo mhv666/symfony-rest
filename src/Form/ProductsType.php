@@ -23,22 +23,9 @@ class ProductsType extends AbstractType
             ->add('price')
             ->add('ean13')
             ->add('stock')
-            ->add('merchant', MerchantsType::class, [
-                'data_class' => Merchants::class,
-            ])
-            ->add('category', CategoriesType::class, [
-                'data_class' => Categories::class,
-            ])
+            ->add('merchant')
+            ->add('category')
             ->add('tax_percentage');
-        /*
-            ->add('merchant', CollectionType::class, array(
-                'entry_type' => MerchantsType::class,
-                'allow_add' => true, //This should do the trick. 
-            ))
-            ->add('category', CollectionType::class, array(
-                'entry_type' => CategoriesType::class,
-                'allow_add' => true, //This should do the trick. 
-            ));*/
     }
 
     public function configureOptions(OptionsResolver $resolver)

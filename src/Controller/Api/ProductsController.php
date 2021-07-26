@@ -65,8 +65,35 @@ class ProductsController extends AbstractFOSRestController
 
         $form->handleRequest($request);
 
+        if (!$form->isSubmitted()) {
+            return new Response('', Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($form->isValid()) {
+            $em->persist($product);
+            $em->flush();
+            return $product;
+        }
+
+        return $form;
+    }
+
+    /**
+     * @Rest\Put(path="/products/{id<\d+>}")
+     * @Rest\View(serializerGroups={"products"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function updateAction(
+        EntityManagerInterface  $em,
+        Request $request
+    ) {
 
 
+        $product = new Products();
+        $content = json_decode($request->getContent(), true);
+
+        $form = $this->createForm(ProductsType::class, $product);
+
+        $form->submit($content);
 
         if (!$form->isSubmitted()) {
             return new Response('', Response::HTTP_BAD_REQUEST);
@@ -80,6 +107,7 @@ class ProductsController extends AbstractFOSRestController
 
         return $form;
     }
+
 
     /**
      * @Rest\Delete(path="/products/{id}")
