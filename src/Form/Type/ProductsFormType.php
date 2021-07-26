@@ -5,6 +5,7 @@ namespace App\Form\Type;
 use App\Form\Model\ProductsDto;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -16,6 +17,7 @@ class ProductsFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+
         $builder
             ->add('name', TextType::class)
             ->add('image', UrlType::class)
@@ -32,7 +34,7 @@ class ProductsFormType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => ProductsDto::class,
+            'data_class' => null,
             'csrf_protection' => false
         ]);
     }

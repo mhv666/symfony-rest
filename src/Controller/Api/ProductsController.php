@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\Merchants;
 use App\Entity\Products;
 use App\Form\Type\ProductsFormType;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -24,14 +25,29 @@ class ProductsController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Get(path="/products")
+     * @Rest\Get(path="/products/")
      * @Rest\View(serializerGroups={"products"}, serializerEnableMaxDepthChecks=true)
      */
     public function getAction(
         ProductsRepository $productRepository
     ) {
+
         return $productRepository->findAll();
     }
+    /**
+     * @Rest\Get(path="/products/{id<\d+>}")
+     * @Rest\View(serializerGroups={"products"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function getOnlyOneAction(
+        ProductsRepository $productRepository,
+        Request $request
+    ) {
+
+        $id = $request->get('id');
+
+        return $productRepository->find($id);
+    }
+
     /**
      * @Rest\Post(path="/products")
      * @Rest\View(serializerGroups={"products"}, serializerEnableMaxDepthChecks=true)
@@ -40,9 +56,14 @@ class ProductsController extends AbstractFOSRestController
         EntityManagerInterface  $em,
         Request $request
     ) {
+
+
         $product = new Products();
         $form = $this->createForm(ProductsFormType::class, $product);
         $form->handleRequest($request);
+
+        return $product;
+
 
         if (!$form->isSubmitted()) {
             return new Response('', Response::HTTP_BAD_REQUEST);

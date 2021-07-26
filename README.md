@@ -37,13 +37,13 @@ Implement a full rest API for the next actions:
 - Remove a product
 - Update a product
 
-In addition, you are free to define which important attributes should be defined by the seller when creating or updating a product (ie. name, color, width...). Consider applying a filtering, sorting, and pagination strategy to the product endpoint if is needed. 
+In addition, you are free to define which important attributes should be defined by the seller when creating or updating a product (ie. name, color, width...). Consider applying a filtering, sorting, and pagination strategy to the product endpoint if is needed.
 
 You should include some unit and functional tests (at least, for one of the endpoints).
 
 ### Extra bonus
 
-We would like to check that you like learning new languages, libraries… So if you are a Symfony and PHP expert, just try to use any library (ie. code quality, code metrics…) that you haven’t used before, just for fun! And let us know. 
+We would like to check that you like learning new languages, libraries… So if you are a Symfony and PHP expert, just try to use any library (ie. code quality, code metrics…) that you haven’t used before, just for fun! And let us know.
 
 # How should it be delivered?
 
@@ -52,4 +52,3 @@ You must update this repository with your solution. Let us know when it is ready
 Be creative, don’t limit yourself to this definition and include everything you think it could add value for you to be the chosen one.
 
 **This case study is your presentation card. We will consider this code as the best work you can do.**
-

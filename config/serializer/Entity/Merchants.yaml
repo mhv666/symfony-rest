@@ -1,0 +1,4 @@
+App\Entity\Merchants:
+  attributes:
+    merchant_name:
+      groups: ["products"]
