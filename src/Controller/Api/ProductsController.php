@@ -26,14 +26,29 @@ class ProductsController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Get(path="/products/")
+     * @Rest\Get(path="/products")
      * @Rest\View(serializerGroups={"products"}, serializerEnableMaxDepthChecks=true)
      */
     public function getAction(
-        ProductsRepository $productRepository
+        ProductsRepository $productRepository,
+        Request $request
     ) {
+        $totalItems = $productRepository->countAll();
 
-        return $productRepository->findAll();
+        //review conditionals
+        $currentPage = $request->get('page', 1);
+        $order = $request->get('order', 'ASC');
+        $orderby = $request->get('order_by', 'id');
+        $pageCount = $request->get('per_page', 5);
+        $q = $request->get('q', null);
+
+        $totalCount  = ceil($totalItems / $pageCount);
+        $nextPage = (($currentPage < $totalCount) ? $currentPage + 1 : null);
+        $prevPage = (($currentPage > 1) ? $currentPage - 1 : null);
+        $offset = $pageCount * ($currentPage - 1);
+
+        return $productRepository->findAllWithParams($pageCount, $offset, $order, $orderby, $q);
+        // return $productRepository->findAll();0
     }
     /**
      * @Rest\Get(path="/products/{id<\d+>}")

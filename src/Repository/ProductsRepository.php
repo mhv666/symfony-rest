@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Products;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\OrderBy;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -48,6 +49,33 @@ class ProductsRepository extends ServiceEntityRepository
     }
     */
 
+
+
+    public function findAllWithParams($limit = null, $offset = null, $order = 'DESC', $orderBy = 'id', $q = null): array
+    {
+
+        $qb = $this->createQueryBuilder('p')
+            ->orderBy("p.{$orderBy}", $order)
+            ->setMaxResults($limit)
+            ->setFirstResult($offset);
+
+        if (!is_null($q)) {
+            $qb->where("lower(p.name) like lower(:name)")->setParameter("name", "%" . $q . "%");
+        }
+
+        $query = $qb->getQuery();
+
+        return $query->execute();
+    }
+    public function countAll(): ?int
+    {
+        return $this->createQueryBuilder('p')
+            ->select('count(p.id)')
+            ->getQuery()
+            //->useQueryCache(true)
+            //->enableResultCache(3600, 'my_custom_id')
+            ->getSingleScalarResult();
+    }
     public function deleteById($id): ?bool
     {
         $em = $this->getEntityManager();
