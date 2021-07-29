@@ -55,7 +55,7 @@ class ProductsRepository extends ServiceEntityRepository
     {
 
         $qb = $this->createQueryBuilder('p')
-            ->orderBy("p.{$orderBy}", $order)
+            ->addOrderBy("p.{$orderBy}", $order)
             ->setMaxResults($limit)
             ->setFirstResult($offset);
 
@@ -64,7 +64,6 @@ class ProductsRepository extends ServiceEntityRepository
         }
 
         $query = $qb->getQuery();
-
         return $query->execute();
     }
     public function countAll(): ?int
@@ -72,10 +71,44 @@ class ProductsRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
             ->select('count(p.id)')
             ->getQuery()
-            //->useQueryCache(true)
-            //->enableResultCache(3600, 'my_custom_id')
+            ->useQueryCache(true)
+            ->enableResultCache(3600, 'count_id_products')
             ->getSingleScalarResult();
     }
+
+    public function countBy($q = null): ?int
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('count(p.id)');
+
+        if (!is_null($q)) {
+            $qb->where("lower(p.name) like lower(:name)")->setParameter("name", "%" . $q . "%");
+        }
+
+        $result = $qb
+            ->getQuery()
+            ->useQueryCache(true)
+            ->enableResultCache(3600, 'count_by_products')
+            ->getSingleScalarResult();
+
+        return $result;
+    }
+
+    /*
+
+
+
+$qb->select($qb->expr()->count('u'))
+   ->from('User', 'u')
+   ->where('u.type = ?1')
+   ->setParameter(1, 'employee');
+
+$query = $qb->getQuery();
+
+$usersCount = $query->getSingleScalarResult();
+*/
+
+
     public function deleteById($id): ?bool
     {
         $em = $this->getEntityManager();

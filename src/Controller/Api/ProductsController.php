@@ -9,6 +9,7 @@ use App\Form\Type\ProductsFormType;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use App\Repository\ProductsRepository;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\View\View;
 use Psr\Log\LoggerInterface;
@@ -42,12 +43,24 @@ class ProductsController extends AbstractFOSRestController
         $pageCount = $request->get('per_page', 5);
         $q = $request->get('q', null);
 
-        $totalCount  = ceil($totalItems / $pageCount);
-        $nextPage = (($currentPage < $totalCount) ? $currentPage + 1 : null);
-        $prevPage = (($currentPage > 1) ? $currentPage - 1 : null);
         $offset = $pageCount * ($currentPage - 1);
 
-        return $productRepository->findAllWithParams($pageCount, $offset, $order, $orderby, $q);
+        $result = $productRepository->findAllWithParams($pageCount, $offset, $order, $orderby, $q);
+
+
+        $criteria = ['type' => 'employee'];
+
+        $totalResult = $productRepository->countBy($q);
+
+        $totalCount  = ceil($totalResult / $pageCount);
+        $nextPage = (($currentPage < $totalCount) ? $currentPage + 1 : null);
+        $prevPage = (($currentPage > 1) ? $currentPage - 1 : null);
+
+        $result['prev'] = $prevPage;
+        $result['next'] = $nextPage;
+        $result['total_pages'] = $totalResult;
+
+        return $result;
         // return $productRepository->findAll();0
     }
     /**
