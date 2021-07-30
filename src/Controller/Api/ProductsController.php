@@ -12,9 +12,11 @@ use App\Repository\ProductsRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\View\View;
+use PhpParser\Node\Expr\FuncCall;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\RouterInterface;
 use Throwable;
 
 class ProductsController extends AbstractFOSRestController
@@ -36,7 +38,6 @@ class ProductsController extends AbstractFOSRestController
     ) {
         $totalItems = $productRepository->countAll();
 
-        //review conditionals
         $currentPage = $request->get('page', 1);
         $order = $request->get('order', 'ASC');
         $orderby = $request->get('order_by', 'id');
@@ -47,18 +48,16 @@ class ProductsController extends AbstractFOSRestController
 
         $result = $productRepository->findAllWithParams($pageCount, $offset, $order, $orderby, $q);
 
-
-        $criteria = ['type' => 'employee'];
-
         $totalResult = $productRepository->countBy($q);
 
         $totalCount  = ceil($totalResult / $pageCount);
         $nextPage = (($currentPage < $totalCount) ? $currentPage + 1 : null);
         $prevPage = (($currentPage > 1) ? $currentPage - 1 : null);
 
-        $result['prev'] = $prevPage;
-        $result['next'] = $nextPage;
-        $result['total_pages'] = $totalResult;
+        //dependecy Inyection?
+        $result['prev'] = $this->getUriPage($prevPage, $request);
+        $result['next'] = $this->getUriPage($nextPage, $request);
+        $result['total_pages'] = $totalCount;
 
         return $result;
         // return $productRepository->findAll();0
@@ -149,5 +148,27 @@ class ProductsController extends AbstractFOSRestController
             return View::create('Book not found', Response::HTTP_BAD_REQUEST);
         }
         return View::create(null, Response::HTTP_NO_CONTENT);
+    }
+
+    private function getUriPage(
+        int $page = null,
+        Request $request
+    ) {
+
+        if (is_null($page)) {
+            return null;
+        }
+
+        $query_string = [];
+        parse_str($_SERVER['QUERY_STRING'], $query_string);
+        $query_string['page'] = $page;
+        $rdr_str = http_build_query($query_string);
+
+        if (null !== $qs = $rdr_str) {
+            $qs = '?' . $qs;
+        }
+        $uri = $request->getSchemeAndHttpHost() . $request->getBaseUrl() . $request->getPathInfo() . $qs;
+
+        return $uri;
     }
 }
