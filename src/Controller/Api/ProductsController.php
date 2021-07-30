@@ -37,16 +37,31 @@ class ProductsController extends AbstractFOSRestController
         Request $request
     ) {
         $totalItems = $productRepository->countAll();
-
+        //TODO: DTO
+        $dto = ['name', 'description', 'image'];
+        $wrappedFields = null;
         $currentPage = $request->get('page', 1);
         $order = $request->get('order', 'ASC');
         $orderby = $request->get('order_by', 'id');
         $pageCount = $request->get('per_page', 5);
+        $fields = $request->get('fields', null);
         $q = $request->get('q', null);
+
+        if (!is_null($fields)) {
+            $fields_arr = explode(",", $fields);
+            $dto_diff = array_diff($fields_arr, $dto);
+
+            if (!is_null($fields) && count($dto_diff) > 0) {
+
+                return new Response('One or more fields could not be found', Response::HTTP_NOT_ACCEPTABLE);
+            }
+
+            $wrappedFields = $this->wrapFields($fields_arr);
+        }
 
         $offset = $pageCount * ($currentPage - 1);
 
-        $result = $productRepository->findAllWithParams($pageCount, $offset, $order, $orderby, $q);
+        $result = $productRepository->findAllWithParams($pageCount, $offset, $order, $orderby, $q, $wrappedFields);
 
         $totalResult = $productRepository->countBy($q);
 
@@ -170,5 +185,17 @@ class ProductsController extends AbstractFOSRestController
         $uri = $request->getSchemeAndHttpHost() . $request->getBaseUrl() . $request->getPathInfo() . $qs;
 
         return $uri;
+    }
+
+    private function wrapFields($fields)
+    {
+        if (is_array($fields)) {
+
+            $wrappedFields = array_map(function ($item) {
+                return "p.{$item}";
+            }, $fields);
+            return $wrappedFields;
+        }
+        return null;
     }
 }

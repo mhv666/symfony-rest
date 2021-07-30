@@ -51,7 +51,7 @@ class ProductsRepository extends ServiceEntityRepository
 
 
 
-    public function findAllWithParams($limit = null, $offset = null, $order = 'DESC', $orderBy = 'id', $q = null): array
+    public function findAllWithParams($limit = null, $offset = null, $order = 'DESC', $orderBy = 'id', $q = null, $fields = null): array
     {
 
         $qb = $this->createQueryBuilder('p')
@@ -61,6 +61,11 @@ class ProductsRepository extends ServiceEntityRepository
 
         if (!is_null($q)) {
             $qb->where("lower(p.name) like lower(:name)")->setParameter("name", "%" . $q . "%");
+        }
+
+        if (!is_null($fields)) {
+
+            $qb->select($fields);
         }
 
         $query = $qb->getQuery();
@@ -93,21 +98,6 @@ class ProductsRepository extends ServiceEntityRepository
 
         return $result;
     }
-
-    /*
-
-
-
-$qb->select($qb->expr()->count('u'))
-   ->from('User', 'u')
-   ->where('u.type = ?1')
-   ->setParameter(1, 'employee');
-
-$query = $qb->getQuery();
-
-$usersCount = $query->getSingleScalarResult();
-*/
-
 
     public function deleteById($id): ?bool
     {
