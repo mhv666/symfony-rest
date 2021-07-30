@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\Products;
 use App\Form\ProductsType;
+use App\Pagination\PaginatedCollection;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -16,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
+
 class ProductsController extends AbstractFOSRestController
 {
     private $logger;
@@ -26,7 +28,7 @@ class ProductsController extends AbstractFOSRestController
     }
 
     /**
-     * @Rest\Get(path="/products")
+     * @Rest\Get(path="/products",name="api_products_collection")
      * @Rest\View(serializerGroups={"products"}, serializerEnableMaxDepthChecks=true)
      */
     public function getAction(
@@ -67,12 +69,21 @@ class ProductsController extends AbstractFOSRestController
         $nextPage = (($currentPage < $totalCount) ? $currentPage + 1 : null);
         $prevPage = (($currentPage > 1) ? $currentPage - 1 : null);
 
-        //dependecy Inyection of request?
-        $result['prev'] = $this->getUriPage($prevPage, $request);
-        $result['next'] = $this->getUriPage($nextPage, $request);
-        $result['total_pages'] = $totalCount;
+        $route = 'api_products_collection';
 
-        return $result;
+        $createLinkUrl = function ($targetPage) use ($route, $query) {
+            return $this->generateUrl($route, array_merge(
+                $query,
+                array('page' => $targetPage)
+            ));
+        };
+
+        $paginatedCollection = new PaginatedCollection($result, $totalCount);
+        $paginatedCollection->addLink('self', $createLinkUrl($currentPage));
+        $paginatedCollection->addLink('prev', $createLinkUrl($prevPage));
+        $paginatedCollection->addLink('next', $createLinkUrl($nextPage));
+
+        return $paginatedCollection;
     }
     /**
      * @Rest\Get(path="/products/{id<\d+>}")
