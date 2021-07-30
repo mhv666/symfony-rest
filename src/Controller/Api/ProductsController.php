@@ -2,21 +2,18 @@
 
 namespace App\Controller\Api;
 
-use App\Entity\Merchants;
 use App\Entity\Products;
 use App\Form\ProductsType;
-use App\Form\Type\ProductsFormType;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use App\Repository\ProductsRepository;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\View\View;
-use PhpParser\Node\Expr\FuncCall;
 use Psr\Log\LoggerInterface;
+use ReflectionClass;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\RouterInterface;
 use Throwable;
 
 class ProductsController extends AbstractFOSRestController
@@ -37,8 +34,6 @@ class ProductsController extends AbstractFOSRestController
         Request $request
     ) {
         $totalItems = $productRepository->countAll();
-        //TODO: DTO
-        $dto = ['name', 'description', 'image'];
         $wrappedFields = null;
         $currentPage = $request->get('page', 1);
         $order = $request->get('order', 'ASC');
@@ -47,21 +42,24 @@ class ProductsController extends AbstractFOSRestController
         $fields = $request->get('fields', null);
         $q = $request->get('q', null);
 
+
+        $reflect = new \ReflectionClass(Products::class);
+        $properties = array_map(function ($property) {
+            return $property->getName();
+        }, $reflect->getProperties());
+
+        $query = $request->query->all();
+
+        $filter_by_fields = array_intersect_key($query, array_flip($properties));
+
         if (!is_null($fields)) {
             $fields_arr = explode(",", $fields);
-            $dto_diff = array_diff($fields_arr, $dto);
-
-            if (!is_null($fields) && count($dto_diff) > 0) {
-
-                return new Response('One or more fields could not be found', Response::HTTP_NOT_ACCEPTABLE);
-            }
-
-            $wrappedFields = $this->wrapFields($fields_arr);
+            $wrappedFields = $this->wrapFields($fields_arr, $properties);
         }
 
         $offset = $pageCount * ($currentPage - 1);
 
-        $result = $productRepository->findAllWithParams($pageCount, $offset, $order, $orderby, $q, $wrappedFields);
+        $result = $productRepository->findAllWithParams($pageCount, $offset, $order, $orderby, $q, $wrappedFields, $filter_by_fields);
 
         $totalResult = $productRepository->countBy($q);
 
@@ -69,13 +67,12 @@ class ProductsController extends AbstractFOSRestController
         $nextPage = (($currentPage < $totalCount) ? $currentPage + 1 : null);
         $prevPage = (($currentPage > 1) ? $currentPage - 1 : null);
 
-        //dependecy Inyection?
+        //dependecy Inyection of request?
         $result['prev'] = $this->getUriPage($prevPage, $request);
         $result['next'] = $this->getUriPage($nextPage, $request);
         $result['total_pages'] = $totalCount;
 
         return $result;
-        // return $productRepository->findAll();0
     }
     /**
      * @Rest\Get(path="/products/{id<\d+>}")
@@ -106,7 +103,9 @@ class ProductsController extends AbstractFOSRestController
 
 
         $form->handleRequest($request);
-
+        $errors = $form->getErrors();
+        print_r($errors->__toString());
+        die;
         if (!$form->isSubmitted()) {
             return new Response('', Response::HTTP_BAD_REQUEST);
         }
@@ -187,12 +186,15 @@ class ProductsController extends AbstractFOSRestController
         return $uri;
     }
 
-    private function wrapFields($fields)
+    private function wrapFields($fields, $properties)
     {
-        if (is_array($fields)) {
 
-            $wrappedFields = array_map(function ($item) {
-                return "p.{$item}";
+        if (is_array($fields)) {
+            $wrappedFields = array_map(function ($field) use ($properties) {
+                if (!in_array($field, $properties)) {
+                    throw new BadRequestException("field param '$field' doesn't exist");
+                }
+                return "p.{$field}";
             }, $fields);
             return $wrappedFields;
         }

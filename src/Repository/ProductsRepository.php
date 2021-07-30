@@ -51,7 +51,7 @@ class ProductsRepository extends ServiceEntityRepository
 
 
 
-    public function findAllWithParams($limit = null, $offset = null, $order = 'DESC', $orderBy = 'id', $q = null, $fields = null): array
+    public function findAllWithParams($limit = null, $offset = null, $order = 'DESC', $orderBy = 'id', $q = null, $fields = null, $filter_by_fields = []): array
     {
 
         $qb = $this->createQueryBuilder('p')
@@ -67,6 +67,14 @@ class ProductsRepository extends ServiceEntityRepository
 
             $qb->select($fields);
         }
+
+        if (!empty($filter_by_fields)) {
+            foreach ($filter_by_fields as $key => $value) {
+                $qb->where("p.{$key} = :$key")->setParameter($key, $value);
+            }
+        }
+
+
 
         $query = $qb->getQuery();
         return $query->execute();
