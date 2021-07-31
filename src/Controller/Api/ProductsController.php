@@ -10,9 +10,7 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use App\Repository\ProductsRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\RestBundle\View\View;
 use Psr\Log\LoggerInterface;
-use ReflectionClass;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
@@ -35,8 +33,9 @@ class ProductsController extends AbstractFOSRestController
         ProductsRepository $productRepository,
         Request $request
     ) {
-        $totalItems = $productRepository->countAll();
+        $route = 'api_products_collection';
         $wrappedFields = null;
+
         $currentPage = $request->get('page', 1);
         $order = $request->get('order', 'ASC');
         $orderby = $request->get('order_by', 'id');
@@ -62,23 +61,24 @@ class ProductsController extends AbstractFOSRestController
         $offset = $pageCount * ($currentPage - 1);
 
         $result = $productRepository->findAllWithParams($pageCount, $offset, $order, $orderby, $q, $wrappedFields, $filter_by_fields);
-
-        $totalResult = $productRepository->countBy($q);
-
+        if (empty($result["rows"])) {
+            return new Response('Item not found.', Response::HTTP_NOT_FOUND);
+        }
+        $totalResult = $result['count'];
         $totalCount  = ceil($totalResult / $pageCount);
         $nextPage = (($currentPage < $totalCount) ? $currentPage + 1 : null);
         $prevPage = (($currentPage > 1) ? $currentPage - 1 : null);
 
-        $route = 'api_products_collection';
 
         $createLinkUrl = function ($targetPage) use ($route, $query) {
+            if (is_null($targetPage)) return null;
             return $this->generateUrl($route, array_merge(
                 $query,
                 array('page' => $targetPage)
             ));
         };
 
-        $paginatedCollection = new PaginatedCollection($result, $totalCount);
+        $paginatedCollection = new PaginatedCollection($result['rows'], $totalCount);
         $paginatedCollection->addLink('self', $createLinkUrl($currentPage));
         $paginatedCollection->addLink('prev', $createLinkUrl($prevPage));
         $paginatedCollection->addLink('next', $createLinkUrl($nextPage));
@@ -95,8 +95,13 @@ class ProductsController extends AbstractFOSRestController
     ) {
 
         $id = $request->get('id');
+        $result = $productRepository->find($id);
 
-        return $productRepository->find($id);
+        if (is_null($result)) {
+            return new Response('Item not found.', Response::HTTP_NOT_FOUND);
+        }
+
+        return $result;
     }
 
     /**
@@ -168,11 +173,14 @@ class ProductsController extends AbstractFOSRestController
     public function deleteAction(string $id, ProductsRepository $productsRepository)
     {
         try {
-            $productsRepository->deleteById($id);
+            $result = $productsRepository->deleteById($id);
+            if (is_null($result)) {
+                return new Response('Item not found.', Response::HTTP_NOT_FOUND);
+            }
+            return new Response('Item deleted succesfuly.', Response::HTTP_OK);
         } catch (Throwable $t) {
-            return View::create('Book not found', Response::HTTP_BAD_REQUEST);
+            return new Response($t->getMessage(), $t->getCode());
         }
-        return View::create(null, Response::HTTP_NO_CONTENT);
     }
 
     private function getUriPage(

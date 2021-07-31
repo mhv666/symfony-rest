@@ -51,8 +51,15 @@ class ProductsRepository extends ServiceEntityRepository
 
 
 
-    public function findAllWithParams($limit = null, $offset = null, $order = 'DESC', $orderBy = 'id', $q = null, $fields = null, $filter_by_fields = []): array
-    {
+    public function findAllWithParams(
+        $limit = null,
+        $offset = null,
+        $order = 'DESC',
+        $orderBy = 'id',
+        $q = null,
+        $fields = null,
+        $filter_by_fields = []
+    ): array {
 
         $qb = $this->createQueryBuilder('p')
             ->addOrderBy("p.{$orderBy}", $order)
@@ -60,7 +67,7 @@ class ProductsRepository extends ServiceEntityRepository
             ->setFirstResult($offset);
 
         if (!is_null($q)) {
-            $qb->where("lower(p.name) like lower(:name)")->setParameter("name", "%" . $q . "%");
+            $qb->andwhere("lower(p.name) like lower(:name)")->setParameter("name", "%" . $q . "%");
         }
 
         if (!is_null($fields)) {
@@ -70,14 +77,19 @@ class ProductsRepository extends ServiceEntityRepository
 
         if (!empty($filter_by_fields)) {
             foreach ($filter_by_fields as $key => $value) {
-                $qb->where("p.{$key} = :$key")->setParameter($key, $value);
+                $qb->andwhere("p.{$key} = :$key")->setParameter($key, $value);
             }
         }
 
-
-
         $query = $qb->getQuery();
-        return $query->execute();
+        $result = $query->execute();
+
+        $count = $qb->resetDQLPart('orderBy')
+            ->select('COUNT(p)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return ['rows' => $result, 'count' => $count];
     }
     public function countAll(): ?int
     {
@@ -115,7 +127,8 @@ class ProductsRepository extends ServiceEntityRepository
         if ($product != null) {
             $em->remove($product);
             $em->flush();
+            return true;
         }
-        return true;
+        return null;
     }
 }
