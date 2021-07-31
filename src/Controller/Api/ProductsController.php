@@ -7,15 +7,25 @@ use App\Form\ProductsType;
 use App\Pagination\PaginatedCollection;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use FOS\RestBundle\Exception\InvalidParameterException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use App\Repository\ProductsRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpFoundation\JsonResponse;
+// use OpenAPI\Annotations\Response as Res;
+// use OpenAPI\Annotations\JsonContent as JC;
+// use OpenAPI\Annotations\Items as Items;
+
+use AppBundle\Entity\User;
+use AppBundle\Entity\Reward;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
+use Symfony\Component\Routing\Annotation\Route;
+
+
 use Throwable;
 
 
@@ -28,8 +38,73 @@ class ProductsController extends AbstractFOSRestController
         $this->logger = $logger;
     }
 
+
+
+
+
+
+
     /**
+     * List the products.
+     *
+     * 
      * @Rest\Get(path="/products",name="api_products_collection")
+     * 
+     * 
+     * 
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns a list of products",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Products::class, groups={"products"}))
+     *     )
+     * )
+     * @OA\Parameter(
+     *     name="order",
+     *     in="query",
+     *     example = "ASC",
+     *     description="The field  used to specify the order ASC or DESC",
+     *     @OA\Schema(type="string")
+     * )
+     * 
+     * @OA\Parameter(
+     *     name="order_by",
+     *     in="query",
+     *     example = "color",
+     *     description="The field  used to order",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="page",
+     *     in="query",
+     *     example = "1",
+     *     description="Actual page",
+     *     @OA\Schema(type="int")
+     * )
+     * @OA\Parameter(
+     *     name="per_page",
+     *     in="query",
+     *     example = "5",
+     *     description="Quantity of products per request",
+     *     @OA\Schema(type="int")
+     * )
+     * @OA\Parameter(
+     *     name="fields",
+     *     in="query",
+     *     example = "name,color",
+     *     description="The field/s  you want to recive from the api",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *     name="q",
+     *     in="query",
+     *     example = "qu",
+     *     description="Field used to search products by name",
+     *     @OA\Schema(type="string")
+     * )
+     * 
+     * @OA\Tag(name="Products")
      * @Rest\View(serializerGroups={"products"}, serializerEnableMaxDepthChecks=true)
      */
     public function getAction(
@@ -89,6 +164,19 @@ class ProductsController extends AbstractFOSRestController
         return $paginatedCollection;
     }
     /**
+     * Retrive a single product.
+     * 
+     * @OA\Response(
+     *     response=200,
+     *     description="Retrive a single product.",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Products::class, groups={"products"}))
+     *     )
+     * )
+     * 
+     * @OA\Tag(name="Products")
+     * 
      * @Rest\Get(path="/products/{id<\d+>}")
      * @Rest\View(serializerGroups={"products"}, serializerEnableMaxDepthChecks=true)
      */
@@ -109,6 +197,93 @@ class ProductsController extends AbstractFOSRestController
     }
 
     /**
+     * Insert a product.
+     * 
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns product inserted with id.",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Products::class, groups={"products"}))
+     *     )
+     * )
+     * 
+     * 
+     *    @OA\RequestBody(
+     *         description="Input data format",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     * 
+     *                 @OA\Property(
+     *                     property="name",
+     *                     description="Name of the product",
+     *                     example = "Lorem",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="description",
+     *                     description="A brief description of the product",
+     *                      example = "Qui optio consectetur ad ullam perspiciatis",
+     *                     type="string"
+     *                 ),
+     *                  @OA\Property(
+     *                     property="image",
+     *                     description="url of the product image",
+     *                      example = "/tmp/d63fde10266c48b744b78e2f2762ef71.png",
+     *                     type="string"
+     *                 ),
+     *                  @OA\Property(
+     *                     property="color",
+     *                     description="Main color of the product",
+     *                     example = "blue",
+     *                     type="string"
+     *                 ),
+     *                  @OA\Property(
+     *                     property="merchant",
+     *                     description="Id of an existent merchant",
+     *                     example="223",
+     *                     type="int"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="category",
+     *                     description="Id of an existent category",
+     *                      example="130",
+     *                     type="int"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="price",
+     *                     description="Price of the product",
+     *                      example="290.28",
+     *                     type="double"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="ean13",
+     *                     description="Ean13 code",
+     *                     example="6938832514614",
+     *                     type="int"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="stock",
+     *                     description="Actual stock of the product",
+     *                      example="15",
+     *                     type="int"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="tax_percentage",
+     *                     description="Percetage of tax applied",
+     *                      example="4",
+     *                     type="int"
+     *                 )
+     * 
+     *             )
+     *         )
+     *     )
+     * 
+
+     * @OA\Tag(name="Products")
+     * 
      * @Rest\Post(path="/products")
      * @Rest\View(serializerGroups={"products"}, serializerEnableMaxDepthChecks=true)
      */
@@ -125,19 +300,111 @@ class ProductsController extends AbstractFOSRestController
         if (!$form->isSubmitted()) {
             return new JsonResponse(['message' => 'Error submiting.'], JsonResponse::HTTP_BAD_REQUEST);
         }
-
-        if ($form->isValid()) {
-            $em->persist($product);
-            $em->flush();
-            return $product;
-        } else {
-            dump((string) $form->getErrors(true, false));
+        try {
+            if ($form->isValid()) {
+                $em->persist($product);
+                $em->flush();
+                return $product;
+            } else {
+                dump((string) $form->getErrors(true, false));
+            }
+        } catch (\Exception $e) {
+            throw new BadRequestException("Error while trying to save a new product.");
         }
+
 
         return $form;
     }
 
     /**
+     * 
+     * 
+     * Update one or more fields of a product.
+     * 
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns a product.",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Products::class, groups={"products"}))
+     *     )
+     * )
+     *    @OA\RequestBody(
+     *         description="Input data format",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     * 
+     *                 @OA\Property(
+     *                     property="name",
+     *                     description="Name of the product",
+     *                     example = "Lorem",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="description",
+     *                     description="A brief description of the product",
+     *                      example = "Qui optio consectetur ad ullam perspiciatis",
+     *                     type="string"
+     *                 ),
+     *                  @OA\Property(
+     *                     property="image",
+     *                     description="url of the product image",
+     *                      example = "/tmp/d63fde10266c48b744b78e2f2762ef71.png",
+     *                     type="string"
+     *                 ),
+     *                  @OA\Property(
+     *                     property="color",
+     *                     description="Main color of the product",
+     *                     example = "blue",
+     *                     type="string"
+     *                 ),
+     *                  @OA\Property(
+     *                     property="merchant",
+     *                     description="Id of an existent merchant",
+     *                     example="223",
+     *                     type="int"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="category",
+     *                     description="Id of an existent category",
+     *                      example="130",
+     *                     type="int"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="price",
+     *                     description="Price of the product",
+     *                      example="290.28",
+     *                     type="double"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="ean13",
+     *                     description="Ean13 code",
+     *                     example="6938832514614",
+     *                     type="int"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="stock",
+     *                     description="Actual stock of the product",
+     *                      example="15",
+     *                     type="int"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="tax_percentage",
+     *                     description="Percetage of tax applied",
+     *                      example="4",
+     *                     type="int"
+     *                 )
+     * 
+     *             )
+     *         )
+     *     )
+     * 
+
+     * @OA\Tag(name="Products")
+     * 
+     * 
      * @Rest\Put(path="/products/{id<\d+>}")
      * @Rest\View(serializerGroups={"products"}, serializerEnableMaxDepthChecks=true)
      */
@@ -173,6 +440,28 @@ class ProductsController extends AbstractFOSRestController
 
 
     /**
+     * 
+     * 
+     * 
+     * Delete a single product.
+     * 
+     * @OA\Response(
+     *     response=200,
+     *     description="Retrive a single product.",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(
+     *                  @OA\Property(
+     *                         property="message",
+     *                         type="string",
+     *                         example="Lorem ipsum"
+     *                      ),)
+     *      )
+     *     )
+     * )
+     * 
+     * @OA\Tag(name="Products")
+     * 
      * @Rest\Delete(path="/products/{id}")
      * @Rest\View(serializerGroups={"products"}, serializerEnableMaxDepthChecks=true)
      */
@@ -185,7 +474,7 @@ class ProductsController extends AbstractFOSRestController
             return new JsonResponse(['message' => 'Item not found.'], JsonResponse::HTTP_NOT_FOUND);
         }
 
-        return new JsonResponse(['message' => 'Item deleted succesfuly.'], JsonResponse::HTTP_GONE,  ['content-type' => 'application/json']);;
+        return new JsonResponse(['message' => 'Item deleted succesfuly.'], JsonResponse::HTTP_OK,  ['content-type' => 'application/json']);;
     }
 
     // private function getUriPage(

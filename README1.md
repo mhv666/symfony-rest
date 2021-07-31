@@ -9,6 +9,8 @@
 -doctrine/annotations
 -symfony/test-pack
 -symfony/phpunit-bridge
+-composer require nelmio/api-doc-bundle
+-symfony/asset
 
 ## docker installation
 

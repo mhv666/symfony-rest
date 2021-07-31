@@ -1,0 +1,28 @@
+nelmio_api_doc:
+  documentation:
+    info:
+      title: Documentation for Products API
+      description: >-
+        **VERBS**
+
+        As such, the API uses http methods as **verbs** as follows:
+
+            * **GET** - To retrieve a resource or list of resources
+            * **POST** - To create or update a resource
+            * **PUT** - To update a resource
+            * **DELETE** - To delete a resource
+            
+        **STATUS CODES**
+
+        It also uses http **status codes** in responses to inform about the status of the response. Some usual response status codes and meanings are as follows:
+            
+            * _**200**_ - **OK** - the request was successful (some API calls may return 201 or 204 instead).
+            * _**201**_ - **Created** - the request was successful and a resource was created.
+            * _**400**_ - **Bad Request** - the request wasn't understood, it was missing required parameters or the parameters didn't pass a validation test.
+            * _**404**_ - **Not Found** - the resource wasn't found or doesn't exists.
+            * _**500**_ - **Internal Server Error** - a generic error message, given when an unexpected condition was encountered and no more specific message is suitable. May be returned by any method.
+
+      version: 1.0.0
+  areas: # to filter documented areas
+    path_patterns:
+      - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
