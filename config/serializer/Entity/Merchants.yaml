@@ -1,10 +1,10 @@
 App\Entity\Merchants:
   attributes:
     id:
-      groups: ["products"]
+      groups: ["merchants"]
     merchant_name:
-      groups: ["products"]
+      groups: ["merchants"]
     created_at:
-      groups: ["products"]
+      groups: ["merchants"]
     country:
-      groups: ["products"]
+      groups: ["merchants"]

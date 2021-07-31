@@ -7,12 +7,15 @@ use App\Form\ProductsType;
 use App\Pagination\PaginatedCollection;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Exception\InvalidParameterException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use App\Repository\ProductsRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Throwable;
 
 
@@ -62,7 +65,7 @@ class ProductsController extends AbstractFOSRestController
 
         $result = $productRepository->findAllWithParams($pageCount, $offset, $order, $orderby, $q, $wrappedFields, $filter_by_fields);
         if (empty($result["rows"])) {
-            return new Response('Item not found.', Response::HTTP_NOT_FOUND);
+            return new JsonResponse(['message' => 'Item not found.'], JsonResponse::HTTP_NOT_FOUND);
         }
         $totalResult = $result['count'];
         $totalCount  = ceil($totalResult / $pageCount);
@@ -94,11 +97,12 @@ class ProductsController extends AbstractFOSRestController
         Request $request
     ) {
 
+
         $id = $request->get('id');
         $result = $productRepository->find($id);
 
         if (is_null($result)) {
-            return new Response('Item not found.', Response::HTTP_NOT_FOUND);
+            return new JsonResponse(['message' => 'Item not found.'], JsonResponse::HTTP_NOT_FOUND);
         }
 
         return $result;
@@ -116,20 +120,18 @@ class ProductsController extends AbstractFOSRestController
 
         $product = new Products();
         $form = $this->createForm(ProductsType::class, $product);
+        $this->processForm($request, $form);
 
-
-        $form->handleRequest($request);
-        $errors = $form->getErrors();
-        print_r($errors->__toString());
-        die;
         if (!$form->isSubmitted()) {
-            return new Response('', Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['message' => 'Error submiting.'], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         if ($form->isValid()) {
             $em->persist($product);
             $em->flush();
             return $product;
+        } else {
+            dump((string) $form->getErrors(true, false));
         }
 
         return $form;
@@ -141,28 +143,32 @@ class ProductsController extends AbstractFOSRestController
      */
     public function updateAction(
         EntityManagerInterface  $em,
+        ProductsRepository $productRepository,
         Request $request
     ) {
+        try {
 
 
-        $product = new Products();
-        $content = json_decode($request->getContent(), true);
+            $id = $request->get('id');
+            $product = $productRepository->find($id);
+            $form = $this->createForm(ProductsType::class, $product);
+            $this->processForm($request, $form);
 
-        $form = $this->createForm(ProductsType::class, $product);
+            if (!$form->isSubmitted()) {
+                return new JsonResponse(['message' => 'Error submiting.'], JsonResponse::HTTP_BAD_REQUEST);
+            }
 
-        $form->submit($content);
-
-        if (!$form->isSubmitted()) {
-            return new Response('', Response::HTTP_BAD_REQUEST);
+            if ($form->isValid()) {
+                $em->persist($product);
+                $em->flush();
+                return $product;
+            } else {
+                dump((string) $form->getErrors(true, false));
+            }
+            return $form;
+        } catch (\Exception $e) {
+            throw new BadRequestException($e->getMessage());
         }
-
-        if ($form->isValid()) {
-            $em->persist($product);
-            $em->flush();
-            return $product;
-        }
-
-        return $form;
     }
 
 
@@ -172,38 +178,37 @@ class ProductsController extends AbstractFOSRestController
      */
     public function deleteAction(string $id, ProductsRepository $productsRepository)
     {
-        try {
-            $result = $productsRepository->deleteById($id);
-            if (is_null($result)) {
-                return new Response('Item not found.', Response::HTTP_NOT_FOUND);
-            }
-            return new Response('Item deleted succesfuly.', Response::HTTP_OK);
-        } catch (Throwable $t) {
-            return new Response($t->getMessage(), $t->getCode());
+
+        $result = $productsRepository->deleteById($id);
+        if (is_null($result)) {
+
+            return new JsonResponse(['message' => 'Item not found.'], JsonResponse::HTTP_NOT_FOUND);
         }
+
+        return new JsonResponse(['message' => 'Item deleted succesfuly.'], JsonResponse::HTTP_GONE,  ['content-type' => 'application/json']);;
     }
 
-    private function getUriPage(
-        int $page = null,
-        Request $request
-    ) {
+    // private function getUriPage(
+    //     int $page = null,
+    //     Request $request
+    // ) {
 
-        if (is_null($page)) {
-            return null;
-        }
+    //     if (is_null($page)) {
+    //         return null;
+    //     }
 
-        $query_string = [];
-        parse_str($_SERVER['QUERY_STRING'], $query_string);
-        $query_string['page'] = $page;
-        $rdr_str = http_build_query($query_string);
+    //     $query_string = [];
+    //     parse_str($_SERVER['QUERY_STRING'], $query_string);
+    //     $query_string['page'] = $page;
+    //     $rdr_str = http_build_query($query_string);
 
-        if (null !== $qs = $rdr_str) {
-            $qs = '?' . $qs;
-        }
-        $uri = $request->getSchemeAndHttpHost() . $request->getBaseUrl() . $request->getPathInfo() . $qs;
+    //     if (null !== $qs = $rdr_str) {
+    //         $qs = '?' . $qs;
+    //     }
+    //     $uri = $request->getSchemeAndHttpHost() . $request->getBaseUrl() . $request->getPathInfo() . $qs;
 
-        return $uri;
-    }
+    //     return $uri;
+    // }
 
     private function wrapFields($fields, $properties)
     {
@@ -218,5 +223,11 @@ class ProductsController extends AbstractFOSRestController
             return $wrappedFields;
         }
         return null;
+    }
+    private function processForm(Request $request, FormInterface $form)
+    {
+
+        $data = json_decode($request->getContent(), true);
+        $form->submit($data);
     }
 }

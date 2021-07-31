@@ -1,0 +1,241 @@
+{
+	"info": {
+		"_postman_id": "39abcf86-2067-4ece-b9c9-f96f4afd7177",
+		"name": "symfony-docker",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET LIST products",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:300/api/products",
+					"host": [
+						"localhost"
+					],
+					"port": "300",
+					"path": [
+						"api",
+						"products"
+					]
+				},
+				"description": "retrive all products"
+			},
+			"response": []
+		},
+		{
+			"name": "GET LIST products with query string",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:300/api/products?page=1&per_page=5&q=qu&name=placeataaa&fields=name,color",
+					"host": [
+						"localhost"
+					],
+					"port": "300",
+					"path": [
+						"api",
+						"products"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "per_page",
+							"value": "5"
+						},
+						{
+							"key": "q",
+							"value": "qu"
+						},
+						{
+							"key": "name",
+							"value": "placeataaa"
+						},
+						{
+							"key": "fields",
+							"value": "name,color"
+						}
+					]
+				},
+				"description": "retrive all products"
+			},
+			"response": []
+		},
+		{
+			"name": "GET ONE products",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:300/api/products/42",
+					"host": [
+						"localhost"
+					],
+					"port": "300",
+					"path": [
+						"api",
+						"products",
+						"42"
+					]
+				},
+				"description": "retrive one product"
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE products",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:300/api/products/59",
+					"host": [
+						"localhost"
+					],
+					"port": "300",
+					"path": [
+						"api",
+						"products",
+						"59"
+					]
+				},
+				"description": "Deleete a single product"
+			},
+			"response": []
+		},
+		{
+			"name": "PUT products",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "",
+						"value": "42",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "name",
+						"value": "qui",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "description",
+						"value": "Tempora veniam ea ea at dolore officia quo enim doloribus aut aut blanditiis illo quisquam blanditiis explicabo occaecati sit inventore atque sed et eum aut architecto enim numquam pariatur magnam dolor rerum quo.",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "image",
+						"value": "/tmp/65adf59d9f4c860fa59a8a761bb2b81e.png",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "color",
+						"value": "blue",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "merchant",
+						"value": "[object Object]",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "category",
+						"value": "[object Object]",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "price",
+						"value": "433.46",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "ean13",
+						"value": "6566283729853",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "stock",
+						"value": "6",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "tax_percentage",
+						"value": "20",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "created_at",
+						"value": "2021-07-25T20:35:49+00:00",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"name\": \"put put\",\n\"description\": \"Qui optio consectetur ad ullam perspiciatis velit mollitia consequatur reprehenderit soluta quisquam qui numquam temporibus aperiam harum sed nesciunt quia sunt et et aut et.\",\n\"image\": \"/tmp/d63fde10266c48b744b78e2f2762ef71.png\", \n\"color\": \"teal\",\n\"merchant\": 228,\n\"category\": 130,\n\"price\": 290.28,\n\"ean13\": \"6938832514614\",\n\"stock\": 3,\n\"tax_percentage\": 2\n}"
+				},
+				"url": {
+					"raw": "localhost:300/api/products/89",
+					"host": [
+						"localhost"
+					],
+					"port": "300",
+					"path": [
+						"api",
+						"products",
+						"89"
+					]
+				},
+				"description": "update a product"
+			},
+			"response": []
+		},
+		{
+			"name": "POST products",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"name\": \"placeataaa\",\n\"description\": \"Qui optio consectetur ad ullam perspiciatis velit mollitia consequatur reprehenderit soluta quisquam qui numquam temporibus aperiam harum sed nesciunt quia sunt et et aut et.\",\n\"image\": \"/tmp/d63fde10266c48b744b78e2f2762ef71.png\",\n\"color\": \"teal\",\n\"merchant\": 228,\n\"category\": 130,\n\"price\": 290.28,\n\"ean13\": \"6938832514614\",\n\"stock\": 3,\n\"tax_percentage\": 2\n}"
+				},
+				"url": {
+					"raw": "localhost:300/api/products",
+					"host": [
+						"localhost"
+					],
+					"port": "300",
+					"path": [
+						"api",
+						"products"
+					]
+				},
+				"description": "upload a product"
+			},
+			"response": []
+		}
+	]
+}

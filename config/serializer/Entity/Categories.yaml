@@ -1,6 +1,6 @@
 App\Entity\Categories:
   attributes:
     id:
-      groups: ["products"]
+      groups: ["categories"]
     name:
-      groups: ["products"]
+      groups: ["categories"]
