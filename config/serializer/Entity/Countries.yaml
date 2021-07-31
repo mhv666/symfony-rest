@@ -1,6 +1,6 @@
 App\Entity\Countries:
   attributes:
     id:
-      groups: ["countries"]
+      groups: ["products"]
     name:
-      groups: ["countries"]
+      groups: ["products"]
