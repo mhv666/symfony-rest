@@ -428,7 +428,7 @@ class ProductsController extends AbstractFOSRestController
                 $em->flush();
                 return $product;
             } else {
-                dump((string) $form->getErrors(true, false));
+                $form->getErrors(true, false);
             }
             return $form;
         } catch (\Exception $e) {
