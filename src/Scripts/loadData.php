@@ -76,7 +76,7 @@ try {
         $stmt = $mbd->prepare("INSERT INTO products (name, image, color,merchant_id,category_id,price,description,ean13,stock,tax_percentage,created_at)
                                 VALUES (:name,:image,:color,:merchant_id,:category_id,:price,:description,:ean13,:stock,:tax_percentage,:created_at)");
         $stmt->bindParam(':name', $faker->word());
-        $stmt->bindParam(':image', $faker->image());
+        $stmt->bindParam(':image', $faker->imageUrl(640, 480, 'food'));
         $stmt->bindParam(':color', $faker->safeColorName());
         $stmt->bindParam(':merchant_id', $rows_merchants[rand(0, 9)]);
         $stmt->bindParam(':category_id', $rows_categories[rand(0, 3)]);

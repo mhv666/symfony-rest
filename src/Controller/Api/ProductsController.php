@@ -225,13 +225,13 @@ class ProductsController extends AbstractFOSRestController
      *                 @OA\Property(
      *                     property="description",
      *                     description="A brief description of the product",
-     *                      example = "Qui optio consectetur ad ullam perspiciatis",
+     *                     example = "Qui optio consectetur ad ullam perspiciatis",
      *                     type="string"
      *                 ),
      *                  @OA\Property(
      *                     property="image",
      *                     description="url of the product image",
-     *                      example = "/tmp/d63fde10266c48b744b78e2f2762ef71.png",
+     *                     example = "http://lorempixel.com/400/200/food/1",
      *                     type="string"
      *                 ),
      *                  @OA\Property(
@@ -306,7 +306,7 @@ class ProductsController extends AbstractFOSRestController
                 $em->flush();
                 return $product;
             } else {
-                dump((string) $form->getErrors(true, false));
+                $form->getErrors(true, false);
             }
         } catch (\Exception $e) {
             throw new BadRequestException("Error while trying to save a new product.");
@@ -351,7 +351,7 @@ class ProductsController extends AbstractFOSRestController
      *                  @OA\Property(
      *                     property="image",
      *                     description="url of the product image",
-     *                      example = "/tmp/d63fde10266c48b744b78e2f2762ef71.png",
+     *                      example = "http://lorempixel.com/400/200/food",
      *                     type="string"
      *                 ),
      *                  @OA\Property(

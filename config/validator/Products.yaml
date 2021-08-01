@@ -1,0 +1,42 @@
+# config/validator/validation.yaml
+App\Entity\Products:
+  properties:
+    name:
+      - NotBlank: ~
+      - Length:
+          min: 1
+          max: 15
+          minMessage: "The color name must be at least {{ limit }} characters long"
+          maxMessage: "The color name cannot be longer than {{ limit }} characters"
+    description:
+      - NotBlank: ~
+      - Length:
+          min: 90
+          max: 500
+          minMessage: "The color name must be at least {{ limit }} characters long"
+          maxMessage: "The color name cannot be longer than {{ limit }} characters"
+    image:
+      - Url:
+          message: The url "{{ value }}" is not a valid url.
+    color:
+      - Length:
+          min: 2
+          max: 15
+          minMessage: "The color name must be at least {{ limit }} characters long"
+          maxMessage: "The color name cannot be longer than {{ limit }} characters"
+    price:
+      - NotBlank: ~
+      - Positive: ~
+    ean13:
+      - NotBlank: ~
+      - Positive: ~
+    stock:
+      - NotBlank: ~
+      - PositiveOrZero: ~
+    tax_percentage:
+      - NotBlank: ~
+      - PositiveOrZero: ~
+    merchant:
+      - NotBlank: ~
+    category:
+      - NotBlank: ~
