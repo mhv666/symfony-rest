@@ -120,14 +120,12 @@ class ProductsController extends AbstractFOSRestController
         $pageCount = $request->get('per_page', 5);
         $fields = $request->get('fields', null);
         $q = $request->get('q', null);
-
+        $query = $request->query->all();
 
         $reflect = new \ReflectionClass(Products::class);
         $properties = array_map(function ($property) {
             return $property->getName();
         }, $reflect->getProperties());
-
-        $query = $request->query->all();
 
         $filter_by_fields = array_intersect_key($query, array_flip($properties));
 
