@@ -30,3 +30,8 @@ composer-install: ## Installs composer dependencies
 
 ssh-php: ## ssh's into the php container
 	U_ID=${UID} docker exec -it --user ${UID} ${DOCKER_PHP} bash
+
+run-test: ## ssh's into the php container
+	U_ID=${UID} docker exec -it --user ${UID} ${DOCKER_PHP} bin/phpunit tests/Controller/
+
+

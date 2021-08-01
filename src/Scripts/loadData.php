@@ -7,8 +7,16 @@ $faker->addProvider(new Faker\Provider\Lorem($faker));
 $faker->addProvider(new Faker\Provider\Barcode($faker));
 $faker->addProvider(new Faker\Provider\Color($faker));
 
-$dsn = "mysql:host=symfony-db;dbname=symfony-api-database";
+$symfonyDDBB = 'symfony-api-database';
 
+$isTest = $argv[1];
+
+if (!is_null($isTest)) {
+    $symfonyDDBB .= '_test';
+}
+
+
+$dsn = "mysql:host=symfony-db;dbname={$symfonyDDBB}";
 try {
     $mbd =  new PDO($dsn, 'user', 'password');
     $mbd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
