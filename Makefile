@@ -23,7 +23,7 @@ build: ## Rebuilds all the containers
 	U_ID=${UID} docker-compose build
 
 prepare: ## Runs backend commands
-	$(MAKE) build && $(MAKE) run && $(MAKE) composer-install && $(MAKE) load-data
+	$(MAKE) build && $(MAKE) run && $(MAKE) composer-install && $(MAKE) migration && $(MAKE) migrate  && $(MAKE) load-data
 
 composer-install: ## Installs composer dependencies
 	U_ID=${UID} docker exec --user ${UID} -it ${DOCKER_PHP} composer install --no-scripts --no-interaction --optimize-autoloader
@@ -36,4 +36,10 @@ run-test: ## Run test into the php container
 
 load-data: ## Load dummy data into DDBB
 	U_ID=${UID} docker exec -it --user ${UID} ${DOCKER_PHP} src/Scripts ./loadData.php
+
+migration: ## make entity
+	U_ID=${UID} docker exec -it --user ${UID} ${DOCKER_PHP} bin/console make:migration
+
+migrate: ## make all migrations to ddbb
+	U_ID=${UID} docker exec -it --user ${UID} ${DOCKER_PHP} bin/console doctrine:migrations:migrate
 
