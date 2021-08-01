@@ -35,7 +35,7 @@ run-test: ## Run test into the php container
 	U_ID=${UID} docker exec -it --user ${UID} ${DOCKER_PHP} bin/phpunit tests/Controller/
 
 load-data: ## Load dummy data into DDBB
-	U_ID=${UID} docker exec -it --user ${UID} ${DOCKER_PHP} src/Scripts ./loadData.php
+	U_ID=${UID} docker exec -it --user ${UID} ${DOCKER_PHP} /bin/sh -c "cd src/Scripts; ./loadData.php"
 
 migration: ## make entity
 	U_ID=${UID} docker exec -it --user ${UID} ${DOCKER_PHP} bin/console make:migration
