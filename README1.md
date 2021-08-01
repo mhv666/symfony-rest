@@ -20,19 +20,19 @@ make run
 
 ## List
 
-'''
+```
 http://localhost:300/api/products
-'''
+```
 
 ## get
 
-'''
+```
 http://localhost:300/api/products/80
-'''
+```
 
 ## post
 
-'''
+```
 POST URL http://localhost:300/api/products
 
 {
@@ -47,17 +47,17 @@ POST URL http://localhost:300/api/products
 "stock": 3,
 "tax_percentage": 2
 }
-'''
+```
 
 ## delete
 
-'''
+```
 http://localhost:300/api/products/81
-'''
+```
 
 ## PUT
 
-'''
+```
 PUT http://localhost:300/api/products/81
 
 {
@@ -72,4 +72,4 @@ PUT http://localhost:300/api/products/81
 "stock": 3,
 "tax_percentage": 2
 }
-'''
+```
