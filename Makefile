@@ -23,15 +23,17 @@ build: ## Rebuilds all the containers
 	U_ID=${UID} docker-compose build
 
 prepare: ## Runs backend commands
-	$(MAKE) composer-install
+	$(MAKE) build && $(MAKE) run && $(MAKE) composer-install && $(MAKE) load-data
 
 composer-install: ## Installs composer dependencies
 	U_ID=${UID} docker exec --user ${UID} -it ${DOCKER_PHP} composer install --no-scripts --no-interaction --optimize-autoloader
 
-ssh-php: ## ssh's into the php container
+ssh-php: ## Ssh's into the php container
 	U_ID=${UID} docker exec -it --user ${UID} ${DOCKER_PHP} bash
 
-run-test: ## ssh's into the php container
+run-test: ## Run test into the php container
 	U_ID=${UID} docker exec -it --user ${UID} ${DOCKER_PHP} bin/phpunit tests/Controller/
 
+load-data: ## Load dummy data into DDBB
+	U_ID=${UID} docker exec -it --user ${UID} ${DOCKER_PHP} src/Scripts ./loadData.php
 
