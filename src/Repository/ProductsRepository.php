@@ -62,9 +62,9 @@ class ProductsRepository extends ServiceEntityRepository
     ): array {
 
         $qb = $this->createQueryBuilder('p')
-            ->addOrderBy("p.{$orderBy}", $order)
             ->setMaxResults($limit)
-            ->setFirstResult($offset);
+            ->setFirstResult($offset)
+            ->addOrderBy("p.{$orderBy}", $order);
 
         if (!is_null($q)) {
             $qb->andwhere("lower(p.name) like lower(:name)")->setParameter("name", "%" . $q . "%");
@@ -82,14 +82,15 @@ class ProductsRepository extends ServiceEntityRepository
         }
 
         $query = $qb->getQuery();
-        $result = $query->execute();
-
-        $count = $qb->resetDQLPart('orderBy')
+        $result = $query->getArrayResult();
+        $queryCount = $qb->resetDQLPart('orderBy')
             ->select('COUNT(p)')
-            ->getQuery()
-            ->getSingleScalarResult();
+            ->setFirstResult(0)
+            ->getQuery();
 
-        return ['rows' => $result, 'count' => $count];
+        $count = $queryCount->getSingleScalarResult();
+
+        return ['rows' => $result, 'totalCount' => $count];
     }
     public function countAll(): ?int
     {

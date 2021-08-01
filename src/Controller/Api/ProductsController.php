@@ -142,9 +142,9 @@ class ProductsController extends AbstractFOSRestController
         if (empty($result["rows"])) {
             return new JsonResponse(['message' => 'Item not found.'], JsonResponse::HTTP_NOT_FOUND);
         }
-        $totalResult = $result['count'];
-        $totalCount  = ceil($totalResult / $pageCount);
-        $nextPage = (($currentPage < $totalCount) ? $currentPage + 1 : null);
+        $totalResult = $result['totalCount'];
+        $totalPages  = ceil($totalResult / $pageCount);
+        $nextPage = (($currentPage < $totalPages) ? $currentPage + 1 : null);
         $prevPage = (($currentPage > 1) ? $currentPage - 1 : null);
 
 
@@ -156,7 +156,7 @@ class ProductsController extends AbstractFOSRestController
             ));
         };
 
-        $paginatedCollection = new PaginatedCollection($result['rows'], $totalCount);
+        $paginatedCollection = new PaginatedCollection($result['rows'], $totalPages);
         $paginatedCollection->addLink('self', $createLinkUrl($currentPage));
         $paginatedCollection->addLink('prev', $createLinkUrl($prevPage));
         $paginatedCollection->addLink('next', $createLinkUrl($nextPage));

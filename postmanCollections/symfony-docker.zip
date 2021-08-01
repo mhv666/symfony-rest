@@ -31,7 +31,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:300/api/products?page=1&per_page=5&q=qu&name=placeataaa&fields=name,color",
+					"raw": "localhost:300/api/products?page=9",
 					"host": [
 						"localhost"
 					],
@@ -42,24 +42,28 @@
 					],
 					"query": [
 						{
-							"key": "page",
-							"value": "1"
-						},
-						{
 							"key": "per_page",
-							"value": "5"
+							"value": "5",
+							"disabled": true
 						},
 						{
 							"key": "q",
-							"value": "qu"
+							"value": "qu",
+							"disabled": true
 						},
 						{
-							"key": "name",
-							"value": "placeataaa"
+							"key": "color",
+							"value": "blue",
+							"disabled": true
 						},
 						{
 							"key": "fields",
-							"value": "name,color"
+							"value": "name,color",
+							"disabled": true
+						},
+						{
+							"key": "page",
+							"value": "9"
 						}
 					]
 				},
@@ -220,7 +224,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\"name\": \"placeataaa\",\n\"description\": \"Qui optio consectetur ad ullam perspiciatis velit mollitia consequatur reprehenderit soluta quisquam qui numquam temporibus aperiam harum sed nesciunt quia sunt et et aut et.\",\n\"image\": \"/tmp/d63fde10266c48b744b78e2f2762ef71.png\",\n\"color\": \"teal\",\n\"merchant\": 228,\n\"category\": 130,\n\"price\": 290.28,\n\"ean13\": \"6938832514614\",\n\"stock\": 3,\n\"tax_percentage\": 2\n}"
+					"raw": "{\n\"name\": \"Lorem\",\n\"description\": \"Qui optio consectetur ad ullam perspiciatis\",\n\"image\": \"http://lorempixel.com/400/200/food/1\", \n\"color\": \"teal\",\n\"merchant\": 241,\n\"category\": 138,\n\"price\": 12 ,\n\"ean13\": 6938832514614,\n\"stock\": 12,\n\"tax_percentage\": 2\n}"
 				},
 				"url": {
 					"raw": "localhost:300/api/products",
