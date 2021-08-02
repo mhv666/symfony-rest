@@ -1,36 +1,76 @@
-## composer require packages
+## Download
 
--symfony/orm-pack
--symfony/maker-bundle
--symfony/maker-bundle
--friendsofsymfony/rest-bundle
--symfony/validator
--twig
--doctrine/annotations
--symfony/test-pack
--symfony/phpunit-bridge
--composer require nelmio/api-doc-bundle
--symfony/asset
-
-## docker installation
-
-```bash
-make run
+```shell
+mkdir symfony-docker
+cd symfony-docker
+git clone https://github.com/MM-seller-tribe/backend-case-study-marti-vicens.git
 ```
 
-## List
+## Installing / Getting started
+
+A quick setup you need to get the container up and runing.
+
+```shell
+make build
+make run
+make composer-install
+```
+
+## Building
+
+If after that the the project still not runing , you can try this command righ here:
+
+```shell
+
+make prepare
+```
+
+This will try the steps below, and execute migrate and migrations.
+
+## Some features i wish i could implement
+
+- Advance filtering:
+  feature to filter by less than, greater than etc..
+  eg: price:gt= 100
+- jmeter:
+  used to simulate a heavy load on a server, group of servers, network or object to test its strength.
+- Auth: with bearer token
+
+## Features
+
+Here are some features of this API
+
+#### Swagger
+
+```
+http://localhost:300/api/doc
+```
+
+#### LIST
 
 ```
 http://localhost:300/api/products
 ```
 
-## get
+- Search by:
+
+* q : search every row that match 'name'
+  eg: q=pi -> results = pizza, pi, apio
+* per_page: specify the number of items for this request
+* entity_field: you can specify every field of the entity and will
+  match the result eg:
+  color=blue --> will return all objects of blue
+* fields: you can specify wich fields you want the api to return eg:
+  fields=name,color --> will return items only with this fields
+* page: page you would like to retrive
+
+#### get
 
 ```
 http://localhost:300/api/products/80
 ```
 
-## post
+#### post
 
 ```
 POST URL http://localhost:300/api/products
@@ -49,13 +89,13 @@ POST URL http://localhost:300/api/products
 }
 ```
 
-## delete
+#### delete
 
 ```
 http://localhost:300/api/products/81
 ```
 
-## PUT
+#### PUT
 
 ```
 PUT http://localhost:300/api/products/81
@@ -73,3 +113,17 @@ PUT http://localhost:300/api/products/81
 "tax_percentage": 2
 }
 ```
+
+## composer require packages
+
+-symfony/orm-pack
+-symfony/maker-bundle
+-symfony/maker-bundle
+-friendsofsymfony/rest-bundle
+-symfony/validator
+-twig
+-doctrine/annotations
+-symfony/test-pack
+-symfony/phpunit-bridge
+-composer require nelmio/api-doc-bundle
+-symfony/asset
