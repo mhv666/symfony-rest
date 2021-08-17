@@ -49,31 +49,31 @@ http://localhost:300/api/doc
 #### LIST
 
 ```
-http://localhost:300/api/products
+GET http://localhost:300/api/products
 ```
 
-- Search by:
+Search by:
 
-* q : search every row that match 'name'
+- q : search every row that match 'name'
   eg: q=pi -> results = pizza, pi, apio
-* per_page: specify the number of items for this request
-* entity_field: you can specify every field of the entity and will
+- per_page: specify the number of items for this request
+- entity_field: you can specify every field of the entity and will
   match the result eg:
   color=blue --> will return all objects of blue
-* fields: you can specify wich fields you want the api to return eg:
+- fields: you can specify wich fields you want the api to return eg:
   fields=name,color --> will return items only with this fields
-* page: page you would like to retrive
+- page: page you would like to retrive
 
-#### get
-
-```
-http://localhost:300/api/products/80
-```
-
-#### post
+#### GET
 
 ```
-POST URL http://localhost:300/api/products
+GET http://localhost:300/api/products/80
+```
+
+#### POST
+
+```
+POST http://localhost:300/api/products
 
 {
 "name": "placeat",
@@ -89,10 +89,10 @@ POST URL http://localhost:300/api/products
 }
 ```
 
-#### delete
+#### DELETE
 
 ```
-http://localhost:300/api/products/81
+DELETE http://localhost:300/api/products/81
 ```
 
 #### PUT
@@ -116,14 +116,14 @@ PUT http://localhost:300/api/products/81
 
 ## composer require packages
 
--symfony/orm-pack
--symfony/maker-bundle
--symfony/maker-bundle
--friendsofsymfony/rest-bundle
--symfony/validator
--twig
--doctrine/annotations
--symfony/test-pack
--symfony/phpunit-bridge
--composer require nelmio/api-doc-bundle
--symfony/asset
+- symfony/orm-pack
+- symfony/maker-bundle
+- symfony/maker-bundle
+- friendsofsymfony/rest-bundle
+- symfony/validator
+- twig
+- doctrine/annotations
+- symfony/test-pack
+- symfony/phpunit-bridge
+- composer require nelmio/api-doc-bundle
+- symfony/asset

@@ -38,8 +38,8 @@ class PostControllerTest extends webTestCase
                 "description": "Qui optio  optio optio optio optio optio optio  optio optio optio optio consectetur ad ullam perspiciatis",
                 "image": "http://lorempixel.com/400/200/food/1",
                 "color": "blue",
-                "merchant": "241",
-                "category": "138",
+                "merchant": "12",
+                "category": "6",
                 "price": "290.28",
                 "ean13": "6938832514614",
                 "stock": "15",
@@ -72,8 +72,8 @@ class PostControllerTest extends webTestCase
                 "description": "Qui optio  optio optio optio optio optio optio  optio optio optio optio consectetur ad ullam perspiciatis",
                 "image": "http://lorempixel.com/400/200/food/1",
                 "color": "blue",
-                "merchant": "241",
-                "category": "138",
+                "merchant": "12",
+                "category": "6",
                 "price": "-100",
                 "ean13": "6938832514614",
                 "stock": "15",
@@ -98,7 +98,7 @@ class PostControllerTest extends webTestCase
     public function testGetSingleProduct()
     {
         $client = static::createClient();
-        $client->request('GET', '/api/products/199');
+        $client->request('GET', '/api/products/41');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
     public function testGetSingleEmptyProduct()
@@ -114,7 +114,7 @@ class PostControllerTest extends webTestCase
         $client = static::createClient();
         $client->request(
             'PUT',
-            '/api/products/189',
+            '/api/products/41',
             array(),
             array(),
             array('CONTENT_TYPE' => 'application/json'),
@@ -123,8 +123,8 @@ class PostControllerTest extends webTestCase
                 "description": "Qui optio  optio optio optio optio optio optio  optio optio optio optio consectetur ad ullam perspiciatis",
                 "image": "http://lorempixel.com/400/200/food/1",
                 "color": "blue",
-                "merchant": "241",
-                "category": "138",
+                "merchant": "11",
+                "category": "6",
                 "price": "100",
                 "ean13": "6938832514614",
                 "stock": "15",
@@ -141,7 +141,7 @@ class PostControllerTest extends webTestCase
         $client = static::createClient();
         $client->request(
             'PUT',
-            '/api/products/189',
+            '/api/products/41',
             array(),
             array(),
             array('CONTENT_TYPE' => 'application/json'),
@@ -161,7 +161,7 @@ class PostControllerTest extends webTestCase
     public function testDeleteProduct()
     {
         $client = static::createClient();
-        $client->request('DELETE', '/api/products/197');
+        $client->request('DELETE', '/api/products/46');
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
     public function testDeleteProductWrong()

@@ -127,7 +127,7 @@ class ProductsController extends AbstractFOSRestController
             return $property->getName();
         }, $reflect->getProperties());
 
-        $filter_by_fields = array_intersect_key($query, array_flip($properties));
+        $filterByFields = array_intersect_key($query, array_flip($properties));
 
         if (!is_null($fields)) {
             $fields_arr = explode(",", $fields);
@@ -136,7 +136,7 @@ class ProductsController extends AbstractFOSRestController
 
         $offset = $pageCount * ($currentPage - 1);
 
-        $result = $productRepository->findAllWithParams($pageCount, $offset, $order, $orderby, $q, $wrappedFields, $filter_by_fields);
+        $result = $productRepository->findAllWithParams($pageCount, $offset, $order, $orderby, $q, $wrappedFields, $filterByFields);
         if (empty($result["rows"])) {
             return new JsonResponse(['message' => 'Item not found.'], JsonResponse::HTTP_NOT_FOUND);
         }
@@ -505,7 +505,7 @@ class ProductsController extends AbstractFOSRestController
                 if (!in_array($field, $properties)) {
                     throw new BadRequestException("field param '$field' doesn't exist");
                 }
-                return "p.{$field}";
+                return "s$field}";
             }, $fields);
             return $wrappedFields;
         }
